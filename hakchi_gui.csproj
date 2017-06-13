@@ -14,20 +14,29 @@
     <NoStdLib>False</NoStdLib>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <PublishUrl>publish\</PublishUrl>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>ftp://clusterrr.com/www/www/soft/hakchi2/</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <MapFileExtensions>false</MapFileExtensions>
+    <InstallUrl>http://clusterrr.com/soft/hakchi2/</InstallUrl>
+    <SupportUrl>http://clusterrr.com</SupportUrl>
+    <ProductName>hakchi2</ProductName>
+    <PublisherName>Alexey %27Cluster%27 Avdyukhin</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>index.html</WebPage>
+    <ApplicationRevision>32</ApplicationRevision>
+    <ApplicationVersion>2.0.17.32</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -40,6 +49,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,6 +60,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -68,10 +79,33 @@
   <PropertyGroup />
   <PropertyGroup />
   <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>1D05715BF83320949FC1BAC8462308051A0C0F04</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>cluster_cert.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>tools\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -91,22 +125,10 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Apps\AppTypeCollection.cs" />
-    <Compile Include="Apps\ArcadeGame.cs" />
-    <Compile Include="Apps\Atari2600Game.cs" />
-    <Compile Include="Apps\Sega32XGame.cs" />
-    <Compile Include="Apps\GenesisGame.cs" />
-    <Compile Include="Apps\PceGame.cs" />
-    <Compile Include="Apps\GbaGame.cs" />
-    <Compile Include="Apps\GbcGame.cs" />
-    <Compile Include="Apps\GbGame.cs" />
-    <Compile Include="Apps\N64Game.cs" />
-    <Compile Include="Apps\GameGearGame.cs" />
-    <Compile Include="Apps\SmsGame.cs" />
-    <Compile Include="Apps\SnesGame.cs" />
-    <Compile Include="Apps\NesUGame.cs" />
+    <Compile Include="Apps\UnknowSystem.cs" />
     <Compile Include="Clovershell\ClovershellConnection.cs" />
     <Compile Include="Clovershell\ClovershellException.cs" />
+    <Compile Include="Clovershell\ClovershellWrapper.cs" />
     <Compile Include="Clovershell\ExecConnection.cs" />
     <Compile Include="Clovershell\ShellConnection.cs" />
     <Compile Include="ConfigIni.cs" />
@@ -292,8 +314,17 @@
     <Compile Include="LibWinUsb\WinUsb\PowerPolicyType.cs" />
     <Compile Include="LibWinUsb\WinUsb\WinUsbDevice.cs" />
     <Compile Include="LibWinUsb\WinUsb\WinUsbRegistry.cs" />
+    <Compile Include="Manager\BitmapManager.cs" />
+    <Compile Include="Manager\EmulatorManager.cs" />
+    <Compile Include="Manager\EventBus.cs" />
+    <Compile Include="Manager\GameManager.cs" />
     <Compile Include="MessageBoxManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="SaveStateManager.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -331,7 +362,6 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Apps\FdsGame.cs" />
     <Compile Include="NesMenuCollection.cs" />
     <Compile Include="NesMenuFolder.cs" />
     <Compile Include="NesFile.cs" />
@@ -413,6 +443,36 @@
     <Compile Include="FoldersManagerForm.Designer.cs">
       <DependentUpon>FoldersManagerForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tooling\TaskableTool.cs" />
+    <Compile Include="Tooling\Tasks\FetchOriginalGames.cs" />
+    <Compile Include="Tooling\Tasks\ImportGames.cs" />
+    <Compile Include="UI\Components\EmulatorSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\EmulatorSelector.Designer.cs">
+      <DependentUpon>EmulatorSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\GameDetail.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\GameDetail.Designer.cs">
+      <DependentUpon>GameDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\GameSelecter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Components\GameSelecter.Designer.cs">
+      <DependentUpon>GameSelecter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\FixedTreeview.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\AsyncTask.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\AsyncTask.Designer.cs">
+      <DependentUpon>AsyncTask.cs</DependentUpon>
+    </Compile>
     <Compile Include="UnsupportedFourScreenException.cs" />
     <Compile Include="UnsupportedMapperException.cs" />
     <Compile Include="WaitingClovershellForm.cs">
@@ -439,6 +499,9 @@
     <EmbeddedResource Include="FileBrowserForm.resx">
       <DependentUpon>FileBrowserForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FoldersManagerForm.bg-BG.resx">
+      <DependentUpon>FoldersManagerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FoldersManagerForm.ca-ES.resx">
       <DependentUpon>FoldersManagerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -454,7 +517,13 @@
     <EmbeddedResource Include="FoldersManagerForm.es-ES.resx">
       <DependentUpon>FoldersManagerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FoldersManagerForm.fi-FI.resx">
+      <DependentUpon>FoldersManagerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FoldersManagerForm.fr-FR.resx">
+      <DependentUpon>FoldersManagerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FoldersManagerForm.id-ID.resx">
       <DependentUpon>FoldersManagerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FoldersManagerForm.it-IT.resx">
@@ -468,6 +537,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FoldersManagerForm.sk-SK.resx">
       <DependentUpon>FoldersManagerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FoldersManagerForm.sv-SE.resx">
+      <DependentUpon>FoldersManagerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameGenieCodeAddModForm.bg-BG.resx">
+      <DependentUpon>GameGenieCodeAddModForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GameGenieCodeAddModForm.ca-ES.resx">
       <DependentUpon>GameGenieCodeAddModForm.cs</DependentUpon>
@@ -484,7 +559,13 @@
     <EmbeddedResource Include="GameGenieCodeAddModForm.es-ES.resx">
       <DependentUpon>GameGenieCodeAddModForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GameGenieCodeAddModForm.fi-FI.resx">
+      <DependentUpon>GameGenieCodeAddModForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GameGenieCodeAddModForm.fr-FR.resx">
+      <DependentUpon>GameGenieCodeAddModForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameGenieCodeAddModForm.id-ID.resx">
       <DependentUpon>GameGenieCodeAddModForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GameGenieCodeAddModForm.it-IT.resx">
@@ -508,6 +589,12 @@
     <EmbeddedResource Include="GameGenieCodeAddModForm.sk-SK.resx">
       <DependentUpon>GameGenieCodeAddModForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GameGenieCodeAddModForm.sv-SE.resx">
+      <DependentUpon>GameGenieCodeAddModForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameGenieCodeForm.bg-BG.resx">
+      <DependentUpon>GameGenieCodeForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GameGenieCodeForm.ca-ES.resx">
       <DependentUpon>GameGenieCodeForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -523,7 +610,13 @@
     <EmbeddedResource Include="GameGenieCodeForm.es-ES.resx">
       <DependentUpon>GameGenieCodeForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GameGenieCodeForm.fi-FI.resx">
+      <DependentUpon>GameGenieCodeForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GameGenieCodeForm.fr-FR.resx">
+      <DependentUpon>GameGenieCodeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameGenieCodeForm.id-ID.resx">
       <DependentUpon>GameGenieCodeForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GameGenieCodeForm.it-IT.resx">
@@ -547,6 +640,12 @@
     <EmbeddedResource Include="GameGenieCodeForm.sk-SK.resx">
       <DependentUpon>GameGenieCodeForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GameGenieCodeForm.sv-SE.resx">
+      <DependentUpon>GameGenieCodeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImageGooglerForm.bg-BG.resx">
+      <DependentUpon>ImageGooglerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ImageGooglerForm.ca-ES.resx">
       <DependentUpon>ImageGooglerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -562,7 +661,13 @@
     <EmbeddedResource Include="ImageGooglerForm.es-ES.resx">
       <DependentUpon>ImageGooglerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ImageGooglerForm.fi-FI.resx">
+      <DependentUpon>ImageGooglerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ImageGooglerForm.fr-FR.resx">
+      <DependentUpon>ImageGooglerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImageGooglerForm.id-ID.resx">
       <DependentUpon>ImageGooglerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ImageGooglerForm.it-IT.resx">
@@ -586,8 +691,14 @@
     <EmbeddedResource Include="ImageGooglerForm.sk-SK.resx">
       <DependentUpon>ImageGooglerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ImageGooglerForm.sv-SE.resx">
+      <DependentUpon>ImageGooglerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ImagesForm.resx">
       <DependentUpon>ImagesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.bg-BG.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.ca-ES.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -604,7 +715,13 @@
     <EmbeddedResource Include="MainForm.es-ES.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.fi-FI.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.fr-FR.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.id-ID.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.it-IT.resx">
@@ -630,12 +747,18 @@
     <EmbeddedResource Include="MainForm.sk-SK.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.sv-SE.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.bg-BG.resx" />
     <EmbeddedResource Include="Properties\Resources.ca-ES.resx" />
     <EmbeddedResource Include="Properties\Resources.de-DE.resx" />
     <EmbeddedResource Include="Properties\Resources.el-GR.resx" />
     <EmbeddedResource Include="Properties\Resources.es-AR.resx" />
     <EmbeddedResource Include="Properties\Resources.es-ES.resx" />
+    <EmbeddedResource Include="Properties\Resources.fi-FI.resx" />
     <EmbeddedResource Include="Properties\Resources.fr-FR.resx" />
+    <EmbeddedResource Include="Properties\Resources.id-ID.resx" />
     <EmbeddedResource Include="Properties\Resources.it-IT.resx" />
     <EmbeddedResource Include="Properties\Resources.nl.resx" />
     <EmbeddedResource Include="Properties\Resources.pt-PT.resx" />
@@ -644,6 +767,10 @@
       <LastGenOutput>Resources.ru-RU.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.sk-SK.resx" />
+    <EmbeddedResource Include="Properties\Resources.sv-SE.resx" />
+    <EmbeddedResource Include="SaveStateManager.bg-BG.resx">
+      <DependentUpon>SaveStateManager.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SaveStateManager.ca-ES.resx">
       <DependentUpon>SaveStateManager.cs</DependentUpon>
     </EmbeddedResource>
@@ -659,7 +786,13 @@
     <EmbeddedResource Include="SaveStateManager.es-ES.resx">
       <DependentUpon>SaveStateManager.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SaveStateManager.fi-FI.resx">
+      <DependentUpon>SaveStateManager.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SaveStateManager.fr-FR.resx">
+      <DependentUpon>SaveStateManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SaveStateManager.id-ID.resx">
       <DependentUpon>SaveStateManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SaveStateManager.it-IT.resx">
@@ -683,6 +816,12 @@
     <EmbeddedResource Include="SaveStateManager.sk-SK.resx">
       <DependentUpon>SaveStateManager.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SaveStateManager.sv-SE.resx">
+      <DependentUpon>SaveStateManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchForm.bg-BG.resx">
+      <DependentUpon>SearchForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SearchForm.ca-ES.resx">
       <DependentUpon>SearchForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -698,7 +837,13 @@
     <EmbeddedResource Include="SearchForm.es-ES.resx">
       <DependentUpon>SearchForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SearchForm.fi-FI.resx">
+      <DependentUpon>SearchForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SearchForm.fr-FR.resx">
+      <DependentUpon>SearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchForm.id-ID.resx">
       <DependentUpon>SearchForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SearchForm.it-IT.resx">
@@ -712,6 +857,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SearchForm.sk-SK.resx">
       <DependentUpon>SearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchForm.sv-SE.resx">
+      <DependentUpon>SearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectButtonsForm.bg-BG.resx">
+      <DependentUpon>SelectButtonsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SelectButtonsForm.ca-ES.resx">
       <DependentUpon>SelectButtonsForm.cs</DependentUpon>
@@ -728,7 +879,13 @@
     <EmbeddedResource Include="SelectButtonsForm.es-ES.resx">
       <DependentUpon>SelectButtonsForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SelectButtonsForm.fi-FI.resx">
+      <DependentUpon>SelectButtonsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SelectButtonsForm.fr-FR.resx">
+      <DependentUpon>SelectButtonsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectButtonsForm.id-ID.resx">
       <DependentUpon>SelectButtonsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SelectButtonsForm.it-IT.resx">
@@ -742,6 +899,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SelectButtonsForm.sk-SK.resx">
       <DependentUpon>SelectButtonsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectButtonsForm.sv-SE.resx">
+      <DependentUpon>SelectButtonsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectFileForm.bg-BG.resx">
+      <DependentUpon>SelectFileForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SelectFileForm.ca-ES.resx">
       <DependentUpon>SelectFileForm.cs</DependentUpon>
@@ -758,7 +921,13 @@
     <EmbeddedResource Include="SelectFileForm.es-ES.resx">
       <DependentUpon>SelectFileForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SelectFileForm.fi-FI.resx">
+      <DependentUpon>SelectFileForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SelectFileForm.fr-FR.resx">
+      <DependentUpon>SelectFileForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectFileForm.id-ID.resx">
       <DependentUpon>SelectFileForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SelectFileForm.it-IT.resx">
@@ -772,6 +941,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SelectFileForm.sk-SK.resx">
       <DependentUpon>SelectFileForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectFileForm.sv-SE.resx">
+      <DependentUpon>SelectFileForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectIconForm.bg-BG.resx">
+      <DependentUpon>SelectIconForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SelectIconForm.ca-ES.resx">
       <DependentUpon>SelectIconForm.cs</DependentUpon>
@@ -788,7 +963,13 @@
     <EmbeddedResource Include="SelectIconForm.es-ES.resx">
       <DependentUpon>SelectIconForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SelectIconForm.fi-FI.resx">
+      <DependentUpon>SelectIconForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SelectIconForm.fr-FR.resx">
+      <DependentUpon>SelectIconForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectIconForm.id-ID.resx">
       <DependentUpon>SelectIconForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SelectIconForm.it-IT.resx">
@@ -803,6 +984,9 @@
     <EmbeddedResource Include="SelectIconForm.sk-SK.resx">
       <DependentUpon>SelectIconForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SelectIconForm.sv-SE.resx">
+      <DependentUpon>SelectIconForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SelectModsForm.resx">
       <DependentUpon>SelectModsForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -811,7 +995,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SearchForm.pl-PL.resx">
@@ -862,6 +1045,21 @@
     <EmbeddedResource Include="FoldersManagerForm.ru-RU.resx">
       <DependentUpon>FoldersManagerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\EmulatorSelector.resx">
+      <DependentUpon>EmulatorSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\GameDetail.resx">
+      <DependentUpon>GameDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Components\GameSelecter.resx">
+      <DependentUpon>GameSelecter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\AsyncTask.resx">
+      <DependentUpon>AsyncTask.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WaitingClovershellForm.bg-BG.resx">
+      <DependentUpon>WaitingClovershellForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WaitingClovershellForm.ca-ES.resx">
       <DependentUpon>WaitingClovershellForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -877,7 +1075,13 @@
     <EmbeddedResource Include="WaitingClovershellForm.es-ES.resx">
       <DependentUpon>WaitingClovershellForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WaitingClovershellForm.fi-FI.resx">
+      <DependentUpon>WaitingClovershellForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WaitingClovershellForm.fr-FR.resx">
+      <DependentUpon>WaitingClovershellForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WaitingClovershellForm.id-ID.resx">
       <DependentUpon>WaitingClovershellForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WaitingClovershellForm.it-IT.resx">
@@ -901,6 +1105,12 @@
     <EmbeddedResource Include="WaitingClovershellForm.sk-SK.resx">
       <DependentUpon>WaitingClovershellForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WaitingClovershellForm.sv-SE.resx">
+      <DependentUpon>WaitingClovershellForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WaitingFelForm.bg-BG.resx">
+      <DependentUpon>WaitingFelForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WaitingFelForm.ca-ES.resx">
       <DependentUpon>WaitingFelForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -916,7 +1126,13 @@
     <EmbeddedResource Include="WaitingFelForm.es-ES.resx">
       <DependentUpon>WaitingFelForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WaitingFelForm.fi-FI.resx">
+      <DependentUpon>WaitingFelForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WaitingFelForm.fr-FR.resx">
+      <DependentUpon>WaitingFelForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WaitingFelForm.id-ID.resx">
       <DependentUpon>WaitingFelForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WaitingFelForm.it-IT.resx">
@@ -940,176 +1156,228 @@
     <EmbeddedResource Include="WaitingFelForm.sk-SK.resx">
       <DependentUpon>WaitingFelForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WaitingFelForm.sv-SE.resx">
+      <DependentUpon>WaitingFelForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WorkerForm.resx">
       <DependentUpon>WorkerForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="art\README.txt">
+    <Content Include="art\README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\fes1.bin">
+    </Content>
+    <Content Include="data\fes1.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\splash.gz">
+    </Content>
+    <Content Include="data\splash.gz">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="data\uboot.bin">
+    </Content>
+    <Content Include="data\uboot.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="LICENSE">
+    </Content>
+    <EmbeddedResource Include="images\flags\ar.png" />
+    <EmbeddedResource Include="images\flags\bg.png" />
+    <EmbeddedResource Include="images\flags\de.png" />
+    <EmbeddedResource Include="images\flags\es.png" />
+    <EmbeddedResource Include="images\flags\fr.png" />
+    <EmbeddedResource Include="images\flags\gr.png" />
+    <EmbeddedResource Include="images\flags\it.png" />
+    <EmbeddedResource Include="images\flags\nl.png" />
+    <EmbeddedResource Include="images\flags\pl.png" />
+    <EmbeddedResource Include="images\flags\pt.png" />
+    <EmbeddedResource Include="images\flags\ru.png" />
+    <EmbeddedResource Include="images\flags\se.png" />
+    <EmbeddedResource Include="images\flags\sk.png" />
+    <EmbeddedResource Include="images\flags\us.png" />
+    <EmbeddedResource Include="images\flags\fi.png" />
+    <EmbeddedResource Include="images\flags\id.png" />
+    <Content Include="LICENSE">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\hmods\clovercon.hmod">
+    </Content>
+    <Content Include="mods\hmods\clovercon.hmod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\hmods\clovershell.hmod">
+    </Content>
+    <Content Include="mods\hmods\clovershell.hmod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\hmods\fontfix.hmod">
+    </Content>
+    <Content Include="mods\hmods\copyleft.hmod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\bin\busybox">
+    </Content>
+    <Content Include="mods\hmods\fontfix.hmod">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\bin\rsync">
+    </Content>
+    <Content Include="mods\mod_hakchi\bin\busybox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\config">
+    </Content>
+    <Content Include="mods\mod_hakchi\bin\rsync">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\init">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\bin\chmenu">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\init">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\bin\clover-kachikachi-wr">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\bin\chmenu">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\inittab">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\bin\clover-kachikachi-wr">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\inittab">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\b0000_defines">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\b0010_functions">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\b0000_defines">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\p0000_config">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\b0010_functions">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\p7000_preinit">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\p0000_config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\p7070_firmware">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\p7000_preinit">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\p7100_preinit">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\p7070_firmware">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\pa100_games">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\p7100_preinit">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\pffff_config">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\pa100_games">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\rootfs\etc\profile">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\preinit.d\pffff_config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\script\backup">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\rootfs\etc\profile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\script\base">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\script\backup">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\script\games">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\script\base">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\script\install">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\script\games">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\script\package">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\script\install">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\script\removed">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\script\package">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\hakchi\script\transfer">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\script\removed">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_hakchi\sbin\init">
+    </Content>
+    <Content Include="mods\mod_hakchi\hakchi\script\transfer">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_uninstall\bin\busybox">
+    </Content>
+    <Content Include="mods\mod_hakchi\sbin\init">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_uninstall\hakchi\init">
+    </Content>
+    <Content Include="mods\mod_uninstall\bin\busybox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="mods\mod_uninstall\sbin\init">
+    </Content>
+    <Content Include="mods\mod_uninstall\hakchi\init">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\1dac6208-Snow Bros. %28U%29 [!] - NES Mini patch.ips">
+    </Content>
+    <Content Include="mods\mod_uninstall\sbin\init">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\279710dc-Battletoads %28U%29 [bugfix].ips">
+    </Content>
+    <Content Include="patches\1dac6208-Snow Bros. %28U%29 [!] - NES Mini patch.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\2caae01c-Felix the cat noDim hack %28for U [!] version%29.ips">
+    </Content>
+    <Content Include="patches\279710dc-Battletoads %28U%29 [bugfix].ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\46fd7843-Splatter House - Wanpaku Graffiti %28J%29 [!] - MMC3 patch.ips">
+    </Content>
+    <Content Include="patches\2caae01c-Felix the cat noDim hack %28for U [!] version%29.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\4ec0fecc-Ufouria - The Saga %28E%29 [NTSC hack].ips">
+    </Content>
+    <Content Include="patches\46fd7843-Splatter House - Wanpaku Graffiti %28J%29 [!] - MMC3 patch.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\61179bfa-Jungle Book %28no dim%29 .ips">
+    </Content>
+    <Content Include="patches\4ec0fecc-Ufouria - The Saga %28E%29 [NTSC hack].ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\6dc28b5a-Bio Miracle Bokutte Upa - MMC5 patch.ips">
+    </Content>
+    <Content Include="patches\61179bfa-Jungle Book %28no dim%29 .ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\75b3eb37-Saiyuuki World 2 - MMC3 patch.ips">
+    </Content>
+    <Content Include="patches\6dc28b5a-Bio Miracle Bokutte Upa - MMC5 patch.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\8889c564-Immortal, The %28U%29 [!] %28bright hack%29.ips">
+    </Content>
+    <Content Include="patches\75b3eb37-Saiyuuki World 2 - MMC3 patch.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\96087988-RoboCop 3 %28U%29 [!] - NES Mini patch.ips">
+    </Content>
+    <Content Include="patches\8889c564-Immortal, The %28U%29 [!] %28bright hack%29.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\9ab274ae-Cheetahmen II - MMC1 patch.ips">
+    </Content>
+    <Content Include="patches\96087988-RoboCop 3 %28U%29 [!] - NES Mini patch.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\ac8dcdea-Cybernoid - The Fighting Machine %28U%29 [!] %28fix%29.ips">
+    </Content>
+    <Content Include="patches\9ab274ae-Cheetahmen II - MMC1 patch.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\ba51ac6f-Holy Diver %28J%29 - MMC1 patch.ips">
+    </Content>
+    <Content Include="patches\ac8dcdea-Cybernoid - The Fighting Machine %28U%29 [!] %28fix%29.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\c4b6ed3c-Bill &amp; Ted%27s Excellent Video Game Adventure %28U%29 - NES Mini patch.ips">
+    </Content>
+    <Content Include="patches\ba51ac6f-Holy Diver %28J%29 - MMC1 patch.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\ca033b3a-Dragon%27s Lair %28U%29 [!] %28no dim%29.ips">
+    </Content>
+    <Content Include="patches\c4b6ed3c-Bill &amp; Ted%27s Excellent Video Game Adventure %28U%29 - NES Mini patch.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\d054ffb0-Startropics II - Zoda%27s Revenge %28U%29 [!] - MMC3 patch.ips">
+    </Content>
+    <Content Include="patches\ca033b3a-Dragon%27s Lair %28U%29 [!] %28no dim%29.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="patches\f6898a59-James Bond Jr %28no dim%29.ips">
+    </Content>
+    <Content Include="patches\d054ffb0-Startropics II - Zoda%27s Revenge %28U%29 [!] - MMC3 patch.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="user_mods\music_hack.hmod\install">
+    </Content>
+    <Content Include="patches\f6898a59-James Bond Jr %28no dim%29.ips">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="user_mods\music_hack.hmod\pb223_music_hack">
+    </Content>
+    <Content Include="user_mods\music_hack.hmod\install">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="user_mods\music_hack.hmod\uninstall">
+    </Content>
+    <Content Include="user_mods\music_hack.hmod\pb223_music_hack">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="user_mods\music_hack.hmod\uninstall">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="user_mods\password.hmod\install">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="user_mods\password.hmod\password.raw.gz">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="user_mods\password.hmod\password_fail.raw.gz">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="user_mods\password.hmod\password_ok.raw.gz">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="user_mods\password.hmod\S810password">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="user_mods\password.hmod\uninstall">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="user_mods\remove_thumbnails.hmod\install">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="user_mods\remove_thumbnails.hmod\uninstall">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="app.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1353,124 +1621,166 @@
     <Content Include="folder_images\snes_usa.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\2600_sm.png" />
-    <Content Include="images\2600_sm_tr.png" />
-    <Content Include="images\32x_sm.png" />
-    <Content Include="images\32x_sm_tr.png" />
-    <Content Include="images\app_sm.png" />
-    <Content Include="images\app_sm_tr.png" />
-    <Content Include="images\arcade_sm.png" />
-    <Content Include="images\arcade_sm_tr.png" />
-    <Content Include="images\blank_2600.png" />
-    <Content Include="images\blank_32x.png" />
-    <Content Include="images\blank_app.png" />
-    <Content Include="images\blank_arcade.png" />
-    <Content Include="images\blank_gb.png" />
-    <Content Include="images\blank_gba.png" />
-    <Content Include="images\blank_gbc.png" />
-    <Content Include="images\blank_genesis.png" />
-    <Content Include="images\blank_gg.png" />
-    <Content Include="images\blank_n64.png" />
-    <Content Include="images\blank_neogeo.png" />
-    <Content Include="images\blank_nes.png" />
-    <Content Include="images\blank_pce.png" />
-    <Content Include="images\blank_sms.png" />
-    <Content Include="images\blank_snes-eu-jp.png" />
-    <Content Include="images\blank_snes-us.png" />
-    <Content Include="images\gba_sm.png" />
-    <Content Include="images\gba_sm_tr.png" />
-    <Content Include="images\gbc_sm.png" />
-    <Content Include="images\gbc_sm_tr.png" />
-    <Content Include="images\gb_sm.png" />
-    <Content Include="images\gb_sm_tr.png" />
-    <Content Include="images\genesis_sm.png" />
-    <Content Include="images\genesis_sm_tr.png" />
-    <Content Include="images\gg_sm.png" />
-    <Content Include="images\gg_sm_tr.png" />
-    <Content Include="images\green.png" />
-    <Content Include="images\n64_sm.png" />
-    <Content Include="images\n64_sm_tr.png" />
-    <Content Include="images\neogeo_sm.png" />
-    <Content Include="images\neogeo_sm_tr.png" />
-    <Content Include="images\nes_sm_tr.png" />
-    <Content Include="images\famicom_sm.png" />
-    <Content Include="images\famicom_sm_tr.png" />
-    <Content Include="images\fds_sm.png" />
-    <Content Include="images\fds_sm_tr.png" />
-    <Content Include="images\folder_sm_tr.png" />
-    <Content Include="images\original_sm_tr.png" />
-    <Content Include="images\pce_sm.png" />
-    <Content Include="images\pce_sm_tr.png" />
-    <Content Include="images\red.png" />
-    <Content Include="images\sms_sm.png" />
-    <Content Include="images\sms_sm_tr.png" />
-    <Content Include="images\snes-eu-jp_sm.png" />
-    <Content Include="images\snes-eu-jp_sm_tr.png" />
-    <Content Include="images\snes-us_sm.png" />
-    <Content Include="images\snes-us_sm_tr.png" />
+    <EmbeddedResource Include="images\2600_sm.png" />
+    <EmbeddedResource Include="images\2600_sm_tr.png" />
+    <EmbeddedResource Include="images\32x_sm.png" />
+    <EmbeddedResource Include="images\32x_sm_tr.png" />
+    <EmbeddedResource Include="images\app_sm.png" />
+    <EmbeddedResource Include="images\app_sm_tr.png" />
+    <EmbeddedResource Include="images\arcade_sm.png" />
+    <EmbeddedResource Include="images\arcade_sm_tr.png" />
+    <EmbeddedResource Include="images\blank_2600.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_32x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_app.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_arcade.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_gb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_gba.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_gbc.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_genesis.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_gg.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_n64.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_neogeo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_nes.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_pce.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_sms.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_snes-eu-jp.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_snes-us.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\gba_sm.png" />
+    <EmbeddedResource Include="images\gba_sm_tr.png" />
+    <EmbeddedResource Include="images\gbc_sm.png" />
+    <EmbeddedResource Include="images\gbc_sm_tr.png" />
+    <EmbeddedResource Include="images\gb_sm.png" />
+    <EmbeddedResource Include="images\gb_sm_tr.png" />
+    <EmbeddedResource Include="images\genesis_sm.png" />
+    <EmbeddedResource Include="images\genesis_sm_tr.png" />
+    <EmbeddedResource Include="images\gg_sm.png" />
+    <EmbeddedResource Include="images\gg_sm_tr.png" />
+    <EmbeddedResource Include="images\green.png" />
+    <EmbeddedResource Include="images\n64_sm.png" />
+    <EmbeddedResource Include="images\n64_sm_tr.png" />
+    <EmbeddedResource Include="images\neogeo_sm.png" />
+    <EmbeddedResource Include="images\neogeo_sm_tr.png" />
+    <EmbeddedResource Include="images\nes_sm_tr.png" />
+    <EmbeddedResource Include="images\famicom_sm.png" />
+    <EmbeddedResource Include="images\famicom_sm_tr.png" />
+    <EmbeddedResource Include="images\fds_sm.png" />
+    <EmbeddedResource Include="images\fds_sm_tr.png" />
+    <EmbeddedResource Include="images\folder_sm_tr.png" />
+    <EmbeddedResource Include="images\original_sm_tr.png" />
+    <EmbeddedResource Include="images\pce_sm.png" />
+    <EmbeddedResource Include="images\pce_sm_tr.png" />
+    <EmbeddedResource Include="images\red.png" />
+    <EmbeddedResource Include="images\sms_sm.png" />
+    <EmbeddedResource Include="images\sms_sm_tr.png" />
+    <EmbeddedResource Include="images\snes-eu-jp_sm.png" />
+    <EmbeddedResource Include="images\snes-eu-jp_sm_tr.png" />
+    <EmbeddedResource Include="images\snes-us_sm.png" />
+    <EmbeddedResource Include="images\snes-us_sm_tr.png" />
     <Content Include="user_mods\music_hack.hmod\music.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="user_mods\music_hack.hmod\readme.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="user_mods\password.hmod\readme.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="user_mods\README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="folder_images\README.txt">
+    <Content Include="user_mods\remove_thumbnails.hmod\readme.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Content Include="icon.ico" />
+    </Content>
+    <Content Include="folder_images\README.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="icon.ico" />
     <Content Include="folder_images\folder_back.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="images\blank_fds.png" />
-    <Content Include="images\blank_jp.png" />
-    <Content Include="images\nes_sm.png" />
-    <Content Include="images\folder_sm.png" />
-    <Content Include="images\gamepad.png" />
-    <Content Include="images\original_sm.png" />
-    <None Include="patches\README.txt">
+    <EmbeddedResource Include="images\blank_fds.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\blank_jp.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="images\nes_sm.png" />
+    <EmbeddedResource Include="images\folder_sm.png" />
+    <EmbeddedResource Include="images\gamepad.png" />
+    <EmbeddedResource Include="images\original_sm.png" />
+    <Content Include="patches\README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\7z.dll">
+    </Content>
+    <Content Include="tools\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\7z64.dll">
+    </Content>
+    <Content Include="tools\7z64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Content Include="SevenZip\gpl.txt" />
     <Content Include="SevenZip\lgpl.txt" />
-    <None Include="tools\cpio.exe">
+    <Content Include="tools\cpio.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\cyggcc_s-1.dll">
+    </Content>
+    <Content Include="tools\cyggcc_s-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\cygiconv-2.dll">
+    </Content>
+    <Content Include="tools\cygiconv-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\cygintl-8.dll">
+    </Content>
+    <Content Include="tools\cygintl-8.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\cyglzo2-2.dll">
+    </Content>
+    <Content Include="tools\cyglzo2-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\cygwin1.dll">
+    </Content>
+    <Content Include="tools\cygwin1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\lzop.exe">
+    </Content>
+    <Content Include="tools\lzop.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\mkbootfs.exe">
+    </Content>
+    <Content Include="tools\mkbootfs.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\mkbootimg.exe">
+    </Content>
+    <Content Include="tools\mkbootimg.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\unpackbootimg.exe">
+    </Content>
+    <Content Include="tools\unpackbootimg.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -1483,6 +1793,36 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="data\GameGenieDB.xml">
+      <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="data\nescarts.xml">
+      <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <FileType>File</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="config\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -1492,7 +1832,9 @@
   <PropertyGroup>
     <PostBuildEvent>if exist languages rd /S /Q languages
 md languages
-for /D %25%25i in (*.*) do if exist %25%25i\hakchi.resources.dll move /Y %25%25i languages\%25%25i</PostBuildEvent>
+for /D %25%25i in (*.*) do if exist %25%25i\hakchi.resources.dll move /Y %25%25i languages\%25%25i
+rem del *.application
+rem del *.manifest</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

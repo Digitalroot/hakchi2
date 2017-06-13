@@ -33,8 +33,8 @@ namespace com.clusterrr.hakchi_gui
         public static void Load()
         {
             Debug.WriteLine("Loading config");
-            var fileNameOld = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), ConfigFile);
-            var configFullDir = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), ConfigDir);
+            var fileNameOld = Path.Combine(Program.BaseDirectoryExternal, ConfigFile);
+            var configFullDir = Path.Combine(Program.BaseDirectoryExternal, ConfigDir);
             var fileName = Path.Combine(configFullDir, ConfigFile);
             if (File.Exists(fileNameOld)) // Moving old config to new directory
             {
@@ -135,7 +135,7 @@ namespace com.clusterrr.hakchi_gui
             Debug.WriteLine("Saving config");
             var configLines = new List<string>();
             configLines.Add("[Config]");
-            configLines.Add(string.Format("Language={0}", Language));            
+            configLines.Add(string.Format("Language={0}", Language));
             configLines.Add(string.Format("SelectedGames={0}", SelectedGames));
             configLines.Add(string.Format("HiddenGames={0}", HiddenGames));
             configLines.Add(string.Format("Custom2Flashed={0}", CustomFlashed));
@@ -162,16 +162,16 @@ namespace com.clusterrr.hakchi_gui
                 configLines.Add(string.Format("{0}={1}", preset, Presets[preset]));
             }
 
-            var configFullDir = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), ConfigDir);
+            var configFullDir = Path.Combine(Program.BaseDirectoryExternal, ConfigDir);
             var fileName = Path.Combine(configFullDir, ConfigFile);
             Directory.CreateDirectory(configFullDir);
             File.WriteAllLines(fileName, configLines.ToArray());
         }
 
-        public static Dictionary<string,string> GetConfigDictionary()
+        public static Dictionary<string, string> GetConfigDictionary()
         {
             var config = new Dictionary<string, string>();
-            config["clovercon_home_combination"] = string.Format("0x{0:X2}", (byte)ConfigIni.ResetCombination);
+            config["clovercon_home_combination"] = ConfigIni.ResetHack ? string.Format("0x{0:X2}", (byte)ConfigIni.ResetCombination) : "0xFFFF";
             config["clovercon_autofire"] = ConfigIni.AutofireHack ? "1" : "0";
             config["clovercon_autofire_xy"] = ConfigIni.AutofireXYHack ? "1" : "0";
             config["clovercon_fc_start"] = ConfigIni.FcStart ? "1" : "0";

@@ -9,22 +9,44 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Text;
 
 namespace com.clusterrr.hakchi_gui
 {
     public class NesMiniApplication : INesMenuElement
     {
-        public readonly static string GamesDirectory = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "games");
+
+        public readonly static string GamesDirectory = Path.Combine(Program.BaseDirectoryExternal, "games");
         const string DefaultReleaseDate = "1900-01-01";
         const string DefaultPublisher = "UNKNOWN";
+        private bool selected = false;
+        public delegate void ValueChangedHandler(NesMiniApplication app);
 
+        public event ValueChangedHandler SelectedChanged;
+        public bool Selected
+        {
+            get { return selected; }
+            set
+            {
+                
+                if(value != selected)
+                {
+                    selected = value;
+                    if (SelectedChanged != null)
+                    {
+                        SelectedChanged(this);
+                    }
+                }
+                
+            }
+        }
         protected string code;
         public string Code
         {
             get { return code; }
         }
         public const char DefaultPrefix = 'Z';
-        public static Image DefaultCover { get { return Resources.blank_app; } }
+
         internal const string DefaultApp = "/bin/path-to-your-app";
         public virtual string GoogleSuffix
         {
@@ -97,7 +119,97 @@ namespace com.clusterrr.hakchi_gui
                 publisher = value;
             }
         }
+        
+        public Manager.EmulatorManager.Emulator GetEmulator()
+        {
+            return Manager.EmulatorManager.getInstance().GetEmulator(this);
+        }
+      
+        public string Executable
+        {
+            get
+            {
+                string ret =command;
+                if(ret.IndexOf(" ")!= -1)
+                {
+                    ret = ret.Substring(0, ret.IndexOf(" "));
+                }
 
+                return ret;
+
+            }
+        }
+        public string CommandWithoutArguments
+        {
+            get
+            {
+                string ret = command;
+                if(ret.IndexOf(" ") != -1)
+                {
+                    if(ret.IndexOf(" ",ret.IndexOf(" "))!=-1)
+                    {
+                        ret = ret.Substring(0, ret.IndexOf(" ", ret.IndexOf(" ")));
+                    }
+                }
+
+                return ret;
+            }
+        }
+        public string NesClassicRomPath
+        {
+            get
+            {
+                string ret = "";
+
+                if (this.Command.IndexOf(" ") != -1)
+                {
+                    ret = Command.Substring(Command.IndexOf(" ") + 1);
+                }
+              
+                if (ret.IndexOf(" ") != -1)
+                {
+                    ret = ret.Substring(0, ret.IndexOf(" "));
+                }
+                return ret;
+            }
+        }
+        public string RomFile
+        {
+            get
+            {
+                string ret = "";
+
+                if(this.Command.IndexOf(" ") != -1)
+                {
+                    ret = Command.Substring(Command.IndexOf(" ") + 1);
+                }
+                if(ret.IndexOf("/")!=-1)
+                {
+                    ret = ret.Substring(ret.LastIndexOf("/") + 1);
+                }
+                if(ret.IndexOf(" ")!=-1)
+                {
+                    ret = ret.Substring(0, ret.IndexOf(" "));
+                }
+                return ret;
+            }
+        }
+        public string Prefix
+        {
+            get
+            {
+                string ret = "-";
+                if(code.Contains("-"))
+                {
+                    ret = code.Substring(code.IndexOf("-")+1);
+                }
+                if(ret.Contains("-"))
+                {
+                    ret = ret.Substring(0, ret.IndexOf("-"));
+                }
+                return ret;
+            }
+        }
         public static NesMiniApplication FromDirectory(string path, bool ignoreEmptyConfig = false)
         {
             var files = Directory.GetFiles(path, "*.desktop", SearchOption.TopDirectoryOnly);
@@ -109,19 +221,10 @@ namespace com.clusterrr.hakchi_gui
                 if (line.StartsWith("Exec="))
                 {
                     string command = line.Substring(5);
-                    if (command.StartsWith("/usr/bin/clover-kachikachi") || command.StartsWith("/bin/clover-kachikachi-wr"))
-                    {
-                        if (command.Contains(".nes"))
-                            return new NesGame(path, ignoreEmptyConfig);
-                        if (command.Contains(".fds"))
-                            return new FdsGame(path, ignoreEmptyConfig);
-                    }
-                    var app = AppTypeCollection.GetAppByExec(command);
-                    if (app != null)
-                    {
-                        var constructor = app.Class.GetConstructor(new Type[] { typeof(string), typeof(bool) });
+                   
+                        var constructor = typeof(UnknowSystem).GetConstructor(new Type[] { typeof(string), typeof(bool) });
                         return (NesMiniApplication)constructor.Invoke(new object[] { path, ignoreEmptyConfig });
-                    }
+                    
                     break;
                 }
             }
@@ -135,25 +238,40 @@ namespace com.clusterrr.hakchi_gui
                 return ImportApp(fileName);
             if (rawRomData == null)
                 rawRomData = File.ReadAllBytes(fileName);
-            var appinfo = AppTypeCollection.GetAppByExtension(extension);
-            if (appinfo != null)
+            List<Manager.EmulatorManager.Emulator> availableEmus = Manager.EmulatorManager.getInstance().ListByFileType(System.IO.Path.GetFileName(fileName));
+            Manager.EmulatorManager.Emulator toUse = null;
+            if(availableEmus.Count >0)
             {
-                var import = appinfo.Class.GetMethod("Import", new Type[] { typeof(string), typeof(string), typeof(byte[]) });
-                if (import != null)
-                    return (NesMiniApplication)import.Invoke(null, new object[] { fileName, sourceFile, rawRomData });
-                else
-                    return Import(fileName, sourceFile, rawRomData, appinfo.Prefix, 
-                        appinfo.DefaultApps.Length > 0 ? appinfo.DefaultApps[0] : DefaultApp, 
-                        appinfo.DefaultCover, ConfigIni.Compress);
+                toUse = availableEmus[0];
+                return (NesMiniApplication)UnknowSystem.Import(fileName, sourceFile, rawRomData, toUse.Prefix[0], toUse.Executable, Manager.BitmapManager.getInstance().GetBitmap(".\\images\\" + toUse.DefaultImage), toUse.SupportZip); ;
             }
-            string application = extension.Length > 2 ? ("/bin/" + extension.Substring(1)) : DefaultApp;
-            return Import(fileName, sourceFile, rawRomData, DefaultPrefix, application, DefaultCover);
+           else
+            {
+                return null;
+            }
+            
+            
+            
+            //string application = extension.Length > 2 ? ("/bin/" + extension.Substring(1)) : DefaultApp;
+            //return Import(fileName, sourceFile, rawRomData, DefaultPrefix, application, DefaultCover);
         }
 
         private static NesMiniApplication Import(string fileName, string sourceFile, byte[] rawRomData, char prefixCode, string application, Image defaultCover, bool compress = false)
         {
+            if (fileName.ToLower().Contains(".fds"))
+            {
+                if (Encoding.ASCII.GetString(rawRomData, 0, 3) == "FDS") // header? cut it!
+                {
+                    var fdsDataNoHeader = new byte[rawRomData.Length - 0x10];
+                    Array.Copy(rawRomData, 0x10, fdsDataNoHeader, 0, fdsDataNoHeader.Length);
+                    rawRomData = fdsDataNoHeader;
+                }
+            }
             var crc32 = CRC32(rawRomData);
             var code = GenerateCode(crc32, prefixCode);
+
+      
+
             var gamePath = Path.Combine(GamesDirectory, code);
             bool sevenZipped = false;
             if (compress)
@@ -200,7 +318,28 @@ namespace com.clusterrr.hakchi_gui
             game.Save();
             return NesMiniApplication.FromDirectory(gamePath);
         }
+        public string Arguments
+        {
+            get
+            {
+                string ret = "";
+                if (command.IndexOf(" ") != -1)
+                {
+                    if (command.IndexOf(" ", command.IndexOf(" ")+1) != -1)
+                    {
+                        ret = command.Substring(command.IndexOf(" ", command.IndexOf(" ") + 1) + 1).Trim(); ;
+                    }
+                }
 
+                return ret;
+            }
+            set
+            {
+
+                command = (Executable + " " + NesClassicRomPath + " " + value).Trim();
+            }
+           
+        }
         private static NesMiniApplication ImportApp(string fileName)
         {
             if (!File.Exists(fileName)) // Archives are not allowed
@@ -275,6 +414,7 @@ namespace com.clusterrr.hakchi_gui
 
         public virtual bool Save()
         {
+          
             if (!hasUnsavedChanges) return false;
             Debug.WriteLine(string.Format("Saving application \"{0}\" as {1}", Name, Code));
             Name = Regex.Replace(Name, @"'(\d)", @"`$1"); // Apostrophe + any number in game name crashes whole system. What. The. Fuck?
@@ -379,7 +519,7 @@ namespace com.clusterrr.hakchi_gui
                 imagePath = Path.Combine(Path.GetDirectoryName(romFileName), Path.GetFileNameWithoutExtension(romFileName) + ".jpg");
                 if (File.Exists(imagePath))
                     cover = LoadBitmap(imagePath);
-                var artDirectory = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "art");
+                var artDirectory = Path.Combine(Program.BaseDirectoryExternal, "art");
                 Directory.CreateDirectory(artDirectory);
                 imagePath = Path.Combine(artDirectory, Path.GetFileNameWithoutExtension(romFileName) + ".png");
                 if (File.Exists(imagePath))
@@ -463,6 +603,10 @@ namespace com.clusterrr.hakchi_gui
 
         public long Size(string path = null)
         {
+            if(this.GetType() == typeof(NesDefaultGame))
+            {
+                return ((NesDefaultGame)this).Size;
+            }
             if (path == null)
                 path = GamePath;
             long size = 0;
@@ -535,7 +679,7 @@ namespace com.clusterrr.hakchi_gui
 
         private static byte[] Compress(string filename)
         {
-            SevenZipExtractor.SetLibraryPath(Path.Combine(MainForm.BaseDirectory, IntPtr.Size == 8 ? @"tools\7z64.dll" : @"tools\7z.dll"));
+            SevenZipExtractor.SetLibraryPath(Path.Combine(Program.BaseDirectoryInternal, IntPtr.Size == 8 ? @"tools\7z64.dll" : @"tools\7z.dll"));
             var arch = new MemoryStream();
             var compressor = new SevenZipCompressor();
             compressor.CompressionLevel = CompressionLevel.High;

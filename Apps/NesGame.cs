@@ -95,7 +95,7 @@ namespace com.clusterrr.hakchi_gui
             var code = GenerateCode(crc32, Prefix);
             var gamePath = Path.Combine(GamesDirectory, code);
             var nesPath = Path.Combine(gamePath, code + ".nes");
-            var patchesDirectory = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "patches");
+            var patchesDirectory = Path.Combine(Program.BaseDirectoryExternal, "patches");
             Directory.CreateDirectory(patchesDirectory);
             Directory.CreateDirectory(gamePath);
             var patches = Directory.GetFiles(patchesDirectory, string.Format("{0:X8}*.ips", crc32), SearchOption.AllDirectories);
@@ -151,7 +151,7 @@ namespace com.clusterrr.hakchi_gui
             game.Name = Regex.Replace(game.Name, @" ?\(.*?\)", string.Empty).Trim();
             game.Name = Regex.Replace(game.Name, @" ?\[.*?\]", string.Empty).Trim();
             game.Name = game.Name.Replace("_", " ").Replace("  ", " ");
-            game.FindCover(nesFileName, sourceFileName, (game.region == "Japan") ? Resources.blank_jp : Resources.blank_nes, crc32);
+            game.FindCover(nesFileName, sourceFileName, (game.region == "Japan") ?Manager.BitmapManager.getInstance().GetBitmap(".\\images\\blank_jp.png") : Manager.BitmapManager.getInstance().GetBitmap(".\\images\\blank_nes.png"), crc32);
             game.Args = DefaultArgs;
             game.Save();
             return game;
@@ -215,7 +215,7 @@ namespace com.clusterrr.hakchi_gui
         {
             try
             {
-                var xmlDataBasePath = Path.Combine(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "data"), "nescarts.xml");
+                var xmlDataBasePath = Path.Combine(Path.Combine(Program.BaseDirectoryInternal, "data"), "nescarts.xml");
                 Debug.WriteLine("Loading " + xmlDataBasePath);
 
                 if (File.Exists(xmlDataBasePath))

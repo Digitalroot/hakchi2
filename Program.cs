@@ -1,11 +1,16 @@
 ﻿#pragma warning disable 0618
+using com.clusterrr.hakchi_gui.Properties;
 using System;
+using System.Deployment.Application;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace com.clusterrr.hakchi_gui
 {
@@ -22,6 +27,8 @@ namespace com.clusterrr.hakchi_gui
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool AllocConsole();
+
+        public static string BaseDirectoryInternal, BaseDirectoryExternal;
 
         /// <summary>
         /// The main entry point for the application.
@@ -47,41 +54,164 @@ namespace com.clusterrr.hakchi_gui
             }
             Debug.AutoFlush = true;
 #endif
-            bool createdNew = true;
-            using (Mutex mutex = new Mutex(true, "hakchi2", out createdNew))
+            try
             {
-                if (createdNew)
+                bool createdNew = true;
+                using (Mutex mutex = new Mutex(true, "hakchi2", out createdNew))
                 {
-                    // For updates
-                    AppDomain.CurrentDomain.AppendPrivatePath("languages");
-                    var oldFiles = Directory.GetFiles(Path.GetDirectoryName(Application.ExecutablePath), "hakchi.resources.dll", SearchOption.AllDirectories);
-                    foreach (var d in oldFiles)
-                        if (!d.Contains(@"\languages\"))
+                    if (createdNew)
+                    {
+                        BaseDirectoryInternal = Path.GetDirectoryName(Application.ExecutablePath);
+                        if (ApplicationDeployment.IsNetworkDeployed)
                         {
-                            var dir = Path.GetDirectoryName(d);
-                            Debug.WriteLine("Removing old directory: " + dir);
-                            Directory.Delete(dir, true);
+                            // This is not correct way for Windows 7+...
+                            BaseDirectoryExternal = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "hakchi2");
+                            // So if it's not exists, lets try to get documents library path (Win7+)
+                            try
+                            {
+                                if (!Directory.Exists(BaseDirectoryExternal))
+                                    BaseDirectoryExternal = Path.Combine(GetDocumentsLibraryPath(), "hakchi2");
+                            }
+                            catch (Exception ex)
+                            {
+                                // TODO: Test it on Windows XP
+                                Debug.WriteLine(ex.Message);
+                            }
+                        }
+                        else
+                            BaseDirectoryExternal = BaseDirectoryInternal;
+                        Debug.WriteLine("Base directory: " + BaseDirectoryExternal);
+                        ConfigIni.Load();
+                        try
+                        {
+                            if (!string.IsNullOrEmpty(ConfigIni.Language))
+                                Thread.CurrentThread.CurrentUICulture = new CultureInfo(ConfigIni.Language);
+                        }
+                        catch { }
+
+                        // There are some folders which should be accessed by user
+                        // Moving them to "My documents"
+                        if (ApplicationDeployment.IsNetworkDeployed && ApplicationDeployment.CurrentDeployment.IsFirstRun)
+                        {
+                            var externalDirs = new string[]
+                        {
+                            "art", "folder_images", "patches", "user_mods"
+                        };
+                            foreach (var dir in externalDirs)
+                                DirectoryCopy(Path.Combine(BaseDirectoryInternal, dir), Path.Combine(BaseDirectoryExternal, dir), true);
                         }
 
-                    Debug.WriteLine("Starting, version: " + Assembly.GetExecutingAssembly().GetName().Version);
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new MainForm());
-                    Debug.WriteLine("Done.");
-                }
-                else
-                {
-                    Process current = Process.GetCurrentProcess();
-                    foreach (Process process in Process.GetProcessesByName("hakchi"))
+                        string languagesDirectory = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "languages");
+                        const string langFileNames = "hakchi.resources.dll";
+                        AppDomain.CurrentDomain.AppendPrivatePath(languagesDirectory);
+                        // For updates
+                        var oldFiles = Directory.GetFiles(Path.GetDirectoryName(Application.ExecutablePath), langFileNames, SearchOption.AllDirectories);
+                        foreach (var d in oldFiles)
+                            if (!d.Contains(@"\languages\"))
+                            {
+                                var dir = Path.GetDirectoryName(d);
+                                Debug.WriteLine("Removing old directory: " + dir);
+                                if (ApplicationDeployment.IsNetworkDeployed)
+                                {
+                                    var targetDir = Path.Combine(languagesDirectory, Path.GetFileName(dir));
+                                    Directory.CreateDirectory(targetDir);
+                                    var targetFile = Path.Combine(targetDir, langFileNames);
+                                    if (File.Exists(targetFile))
+                                        File.Delete(targetFile);
+                                    File.Move(Path.Combine(dir, langFileNames), targetFile);
+                                }
+                                else
+                                    Directory.Delete(dir, true);
+                            }
+
+                        Debug.WriteLine("Starting, version: " + Assembly.GetExecutingAssembly().GetName().Version);
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+                        Application.Run(new MainForm());
+                        Debug.WriteLine("Done.");
+                    }
+                    else
                     {
-                        if (process.Id != current.Id)
+                        Process current = Process.GetCurrentProcess();
+                        foreach (Process process in Process.GetProcessesByName("hakchi"))
                         {
-                            ShowWindow(process.MainWindowHandle, 9); // Restore
-                            SetForegroundWindow(process.MainWindowHandle); // Foreground
-                            break;
+                            if (process.Id != current.Id)
+                            {
+                                ShowWindow(process.MainWindowHandle, 9); // Restore
+                                SetForegroundWindow(process.MainWindowHandle); // Foreground
+                                break;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message + ex.StackTrace);
+                MessageBox.Show(ex.Message + ex.StackTrace, Resources.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+            // If the destination directory doesn't exist, create it.
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string temppath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(temppath, true);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+                }
+            }
+        }
+        
+        [DllImport("Shell32.dll")]
+        private static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)]Guid rfid, uint dwFlags,
+            IntPtr hToken, out IntPtr ppszPath);
+        private static string GetDocumentsLibraryPath()
+        {
+            IntPtr outPath;
+            var documentsLibraryGuid = new Guid("7B0DB17D-9CD2-4A93-9733-46CC89022E7C");
+            int result = SHGetKnownFolderPath(documentsLibraryGuid, 0, WindowsIdentity.GetCurrent().Token, out outPath);
+            if (result >= 0)
+            {
+                var libConfigPath = Marshal.PtrToStringUni(outPath);
+                var libConfig = new XmlDocument();
+                libConfig.LoadXml(File.ReadAllText(libConfigPath));
+                var nsmgr = new XmlNamespaceManager(libConfig.NameTable);
+                nsmgr.AddNamespace("ns", libConfig.LastChild.NamespaceURI);
+                var docs = libConfig.SelectSingleNode("//ns:searchConnectorDescription[ns:isDefaultSaveLocation='true']/ns:simpleLocation/ns:url/text()", nsmgr);
+                return docs.Value;
+            }
+            else
+            {
+                throw new ExternalException("Cannot get the known folder path. It may not be available on this system.",
+                    result);
             }
         }
     }
